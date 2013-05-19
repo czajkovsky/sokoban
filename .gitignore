@@ -3,6 +3,8 @@
 *.lo
 *.o
 
+sokoban
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
