@@ -16,39 +16,32 @@ int lastTime=0;
 float angle_x;
 float angle_y;
 
+float angle = 0;
+
 int window_id = -1;
 
 
 void displayFrame(void) {
 	glClearColor(0,0,0,1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::mat4 V=glm::lookAt(
-		glm::vec3(0.0f,0.0f,-5.0f),
-		glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(0.0f,1.0f,0.0f));
+    glm::mat4 M=glm::rotate(glm::mat4(1.0f),angle,glm::vec3(0.0f,1.0f,0.0f));
 
-	glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
+    glm::mat4 V=glm::lookAt(
+      glm::vec3(0.0f,0.0f,-5.0f),
+      glm::vec3(0.0f,0.0f,0.0f),
+      glm::vec3(0.0f,1.0f,0.0f));
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(P));
-	glMatrixMode(GL_MODELVIEW);
+    glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(glm::value_ptr(P));
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(glm::value_ptr(V*M));
 
-	glm::mat4 M=glm::mat4(1.0f);
-	M=glm::rotate(M,angle_y,glm::vec3(0.0f,1.0f,0.0f));
-	M=glm::rotate(M,angle_x,glm::vec3(1.0f,0.0f,0.0f));
-	glLoadMatrixf(glm::value_ptr(V*M));
+    glutSolidTorus(0.5,1.5,20,20);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glVertexPointer(3,GL_FLOAT,0,cubeVertices);
-	glColorPointer(3,GL_FLOAT,0,cubeColors);
-	glDrawArrays(GL_QUADS,0,cubeVertexCount);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-
-	glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 void quit() {
@@ -60,7 +53,8 @@ void nextFrame(void) {
 	int actTime=glutGet(GLUT_ELAPSED_TIME);
 	int interval=actTime-lastTime;
 	lastTime=actTime;
-	angle_x+=speed_x*interval/1000.0;
+  angle_x+=speed_x*interval/1000.0;
+	angle+=speed_x*interval/1000.0;
 	angle_y+=speed_y*interval/1000.0;
 	if (angle_x>360) angle_x-=360;
 	if (angle_x>360) angle_x+=360;
@@ -121,9 +115,11 @@ int main(int argc, char* argv[]) {
 	glutSpecialFunc(keyDown);
 	glutSpecialUpFunc(keyUp);
 
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 	glEnable(GL_DEPTH_TEST);
+  // glShadeModel(GL_SMOOTH);
+  glEnable(GL_COLOR_MATERIAL);
 
         glutMainLoop();
         return 0;

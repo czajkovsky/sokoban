@@ -5,7 +5,7 @@ float *geomTexCoords;
 float *geomNormals;
 int geomVertexCount;
 
-void quad(int subdiv,int i1, int i2, float x, float y, float back, float nx, 
+void quad(int subdiv,int i1, int i2, float x, float y, float back, float nx,
 	float ny, float s,float t,int pos){
 		geomVertices[i1*subdiv*3*4+i2*3*4+0+pos*3]=x;
 		geomVertices[i1*subdiv*3*4+i2*3*4+1+pos*3]=y;
