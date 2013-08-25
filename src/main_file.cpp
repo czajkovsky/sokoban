@@ -6,12 +6,17 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "tga.h"
 #include "cube.h"
+#include <iostream>
+
+using namespace std;
 
 float speed_x=0; //60 stopni/s
 float speed_y=0; //60 stopni/s
 int lastTime=0;
 float angle_x;
 float angle_y;
+
+int window_id = -1;
 
 
 void displayFrame(void) {
@@ -46,6 +51,10 @@ void displayFrame(void) {
 	glutSwapBuffers();
 }
 
+void quit() {
+  glutDestroyWindow (window_id);
+  exit (0);
+}
 
 void nextFrame(void) {
 	int actTime=glutGet(GLUT_ELAPSED_TIME);
@@ -75,6 +84,9 @@ void keyDown(int c, int x, int y) {
     case GLUT_KEY_DOWN:
       speed_x=-60;
       break;
+    case 27:
+      quit();
+      break;
   }
 }
 
@@ -95,13 +107,12 @@ void keyUp(int c, int x, int y) {
   }
 }
 
-
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(1440,900);
 	glutInitWindowPosition(0,0);
-	glutCreateWindow("Program OpenGL");
+	window_id = glutCreateWindow("Program OpenGL");
 	glutDisplayFunc(displayFrame);
 	glutIdleFunc(nextFrame);
 
@@ -109,7 +120,6 @@ int main(int argc, char* argv[]) {
 	glewInit();
 	glutSpecialFunc(keyDown);
 	glutSpecialUpFunc(keyUp);
-
 
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT0);
