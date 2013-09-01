@@ -20,8 +20,9 @@ int lastTime=0;
 float angle_x;
 float angle_y;
 
-int currentLevel[10][10];
+int currentLevelFields[10][10];
 int levelSize = -1;
+int currentLevel = -1;
 
 float angle = 0;
 
@@ -38,6 +39,10 @@ string toString(int number) {
   for (int i=0;i<temp.length();i++)
     returnvalue+=temp[temp.length()-i-1];
   return returnvalue;
+}
+
+void drawFloor() {
+  glutSolidCube(0.5);
 }
 
 void displayFrame(void) {
@@ -60,8 +65,7 @@ void displayFrame(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(glm::value_ptr(V*M));
 
-    glutSolidTorus(0.5,1.5,20,20);
-    glutSolidTorus(0.5,2.5,20,20);
+    drawFloor();
 
     glutSwapBuffers();
 }
@@ -126,20 +130,21 @@ void keyUp(int c, int x, int y) {
 void debugLevel() {
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      cout << currentLevel[i][j] << " ";
+      cout << currentLevelFields[i][j] << " ";
     }
     cout << endl;
   }
 }
 
 void readLevel(int level) {
+  currentLevel = level;
   int size = -1;
   string filePath = "levels/" + toString(level) + ".level";
   ifstream levelFile(filePath.c_str());
   levelFile >> levelSize;
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      levelFile >> currentLevel[i][j];
+      levelFile >> currentLevelFields[i][j];
     }
   }
   debugLevel();
