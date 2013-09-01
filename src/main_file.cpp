@@ -49,7 +49,7 @@ void displayFrame(void) {
 	glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 M=glm::rotate(glm::mat4(1.0f),angle,glm::vec3(0.0f,1.0f,0.0f));
+    glm::mat4 M=glm::rotate(glm::rotate(glm::mat4(1.0f),angle_y,glm::vec3(1.0f,0.0f,0.0f)),angle_x,glm::vec3(0.0f,1.0f,0.0f));
 
     glm::mat4 V=glm::lookAt(
       glm::vec3(0.0f,0.0f,-5.0f),
