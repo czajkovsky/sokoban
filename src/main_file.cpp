@@ -20,7 +20,6 @@ float angle = 0;
 
 int window_id = -1;
 
-
 void displayFrame(void) {
 	glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -32,6 +31,8 @@ void displayFrame(void) {
       glm::vec3(0.0f,0.0f,0.0f),
       glm::vec3(0.0f,1.0f,0.0f));
 
+    V=glm::rotate(V,90.0f,glm::vec3(0.0f,1.0f,0.0f));
+
     glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
 
     glMatrixMode(GL_PROJECTION);
@@ -40,6 +41,7 @@ void displayFrame(void) {
     glLoadMatrixf(glm::value_ptr(V*M));
 
     glutSolidTorus(0.5,1.5,20,20);
+    glutSolidTorus(0.5,2.5,20,20);
 
     glutSwapBuffers();
 }
@@ -104,7 +106,7 @@ void keyUp(int c, int x, int y) {
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(1440,900);
+	glutInitWindowSize(800,600);
 	glutInitWindowPosition(0,0);
 	window_id = glutCreateWindow("Program OpenGL");
 	glutDisplayFunc(displayFrame);
