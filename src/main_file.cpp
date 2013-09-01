@@ -19,6 +19,7 @@ float speed_y=0; //60 stopni/s
 int lastTime=0;
 float angle_x;
 float angle_y;
+float zoom = -5;
 
 int currentLevelFields[10][10];
 int levelSize = -1;
@@ -54,10 +55,12 @@ void displayFrame(void) {
     M=glm::rotate(M,angle_x,glm::vec3(1.0f,0.0f,0.0f));
     M=glm::rotate(M,angle_y,glm::vec3(0.0f,1.0f,0.0f));
 
+    drawFloor();
+
     glm::mat4 V=glm::lookAt(
-      glm::vec3(0.0f,0.0f,-5.0f),
-      glm::vec3(0.0f,0.0f,0.0f),
-      glm::vec3(0.0f,1.0f,0.0f));
+      glm::vec3(0.0f, 0.0f, zoom),
+      glm::vec3(0.0f, 0.0f, 0.0f),
+      glm::vec3(0.0f, 1.0f, 0.0f));
 
     glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
 
@@ -66,7 +69,6 @@ void displayFrame(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(glm::value_ptr(V*M));
 
-    drawFloor();
 
     glutSwapBuffers();
 }
@@ -106,7 +108,16 @@ void keyDown(int c, int x, int y) {
       speed_x=-60;
       break;
     case 27:
+      //ESC
       quit();
+      break;
+    case 61:
+      //zoom in
+      zoom+=1;
+      break;
+    case 45:
+      //zoom out
+      zoom-=1;
       break;
   }
 }
