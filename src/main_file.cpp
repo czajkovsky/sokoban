@@ -42,21 +42,22 @@ string toString(int number) {
 }
 
 void drawFloor() {
-  glutSolidCube(0.5);
+  // glutSolidCube(0.5);
+  glutSolidTeapot(0.8);
 }
 
 void displayFrame(void) {
 	glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 M=glm::rotate(glm::rotate(glm::mat4(1.0f),angle_y,glm::vec3(1.0f,0.0f,0.0f)),angle_x,glm::vec3(0.0f,1.0f,0.0f));
+    glm::mat4 M=glm::mat4(1.0f);
+    M=glm::rotate(M,angle_x,glm::vec3(1.0f,0.0f,0.0f));
+    M=glm::rotate(M,angle_y,glm::vec3(0.0f,1.0f,0.0f));
 
     glm::mat4 V=glm::lookAt(
       glm::vec3(0.0f,0.0f,-5.0f),
       glm::vec3(0.0f,0.0f,0.0f),
       glm::vec3(0.0f,1.0f,0.0f));
-
-    V=glm::rotate(V,90.0f,glm::vec3(0.0f,1.0f,0.0f));
 
     glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
 
