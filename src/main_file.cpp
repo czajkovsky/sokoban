@@ -7,6 +7,10 @@
 #include "tga.h"
 #include "cube.h"
 #include <iostream>
+#include <fstream>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 using namespace std;
 
@@ -16,9 +20,25 @@ int lastTime=0;
 float angle_x;
 float angle_y;
 
+int currentLevel[10][10];
+int levelSize = -1;
+
 float angle = 0;
 
 int window_id = -1;
+
+string toString(int number) {
+  if (number == 0) return "0";
+  string temp="";
+  string returnvalue="";
+  while (number>0) {
+    temp+=number%10+48;
+    number/=10;
+  }
+  for (int i=0;i<temp.length();i++)
+    returnvalue+=temp[temp.length()-i-1];
+  return returnvalue;
+}
 
 void displayFrame(void) {
 	glClearColor(0,0,0,1);
@@ -103,7 +123,30 @@ void keyUp(int c, int x, int y) {
   }
 }
 
+void debugLevel() {
+  for(int i=0; i<levelSize; i++) {
+    for(int j=0; j<levelSize; j++) {
+      cout << currentLevel[i][j] << " ";
+    }
+    cout << endl;
+  }
+}
+
+void readLevel(int level) {
+  int size = -1;
+  string filePath = "levels/" + toString(level) + ".level";
+  ifstream levelFile(filePath.c_str());
+  levelFile >> levelSize;
+  for(int i=0; i<levelSize; i++) {
+    for(int j=0; j<levelSize; j++) {
+      levelFile >> currentLevel[i][j];
+    }
+  }
+  debugLevel();
+}
+
 int main(int argc, char* argv[]) {
+  readLevel(1);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(800,600);
