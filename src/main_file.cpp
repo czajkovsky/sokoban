@@ -29,6 +29,18 @@ void defineDirections() {
   directions[0][left][x_axis]=1;
   directions[0][left][y_axis]=0;
 
+  directions[1][up][x_axis]=1;
+  directions[1][up][y_axis]=0;
+  directions[1][left][x_axis]=0;
+  directions[1][left][y_axis]=-1;
+
+  for(int i=0; i<2; i++) {
+    directions[i+2][up][x_axis]=-directions[i][up][x_axis];
+    directions[i+2][up][y_axis]=-directions[i][up][y_axis];
+    directions[i+2][left][x_axis]=-directions[i][left][x_axis];
+    directions[i+2][left][y_axis]=-directions[i][left][y_axis];
+  }
+
   for(int i=0; i<4; i++) {
     directions[i][down][x_axis]=-directions[i][up][x_axis];
     directions[i][down][y_axis]=-directions[i][up][y_axis];
@@ -156,6 +168,7 @@ void nextFrame(void) {
   if (angle_x<0) angle_x=0;
 	if (angle_y>360) angle_y-=360;
 	if (angle_y>360) angle_y+=360;
+  rotation = angle_y/90;
 
 	glutPostRedisplay();
 }
