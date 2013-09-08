@@ -37,12 +37,109 @@ int currentLevelBox[10][10];
 int currentLevelFolk[10][10];
 int currentLevelFloor[10][10];
 int levelSize = -1;
-int currentLevel = -1;
+int currentLevel = 1;
 int boxesCount = 0, boxesDone = 0;
 
 float angle = 0;
 
 int window_id = -1;
+
+string toString(int number) {
+  if (number == 0) return "0";
+  string temp="";
+  string returnvalue="";
+  while (number>0) {
+    temp+=number%10+48;
+    number/=10;
+  }
+  for (int i=0;i<temp.length();i++)
+    returnvalue+=temp[temp.length()-i-1];
+  return returnvalue;
+}
+
+void initAngles() {
+  rotation = 0;
+  speed_x=0;
+  speed_y=0;
+  angle_x=45;
+  angle_y = 0;
+  zoom = -15;
+}
+
+void debugLevel() {
+  for(int i=0; i<levelSize; i++) {
+    for(int j=0; j<levelSize; j++) {
+      cout << currentLevelFloor[i][j] << " ";
+    }
+    cout << endl;
+  }
+}
+
+void resetLevel() {
+  for(int i=0; i<levelSize; i++) {
+    for(int j=0; j<levelSize; j++) {
+      currentLevelFields[i][j]=0;
+      currentLevelFloor[i][j]=0;
+      currentLevelBox[i][j]=0;
+      currentLevelFolk[i][j]=0;
+    }
+  }
+}
+
+void readLevel(int level) {
+  resetLevel();
+  currentLevel = level;
+  int size = -1, field;
+  string filePath = "levels/" + toString(level) + ".level";
+  ifstream levelFile(filePath.c_str());
+  levelFile >> levelSize;
+  for(int i=0; i<levelSize; i++) {
+    for(int j=0; j<levelSize; j++) {
+      levelFile >> field;
+      // Floor:
+      //   2: spot
+      //   3: normal floor
+      if (field>0) currentLevelFloor[i][j]=1;
+      switch(field) {
+        case 9:
+          //borders
+          currentLevelFields[i][j]=1;
+          currentLevelFloor[i][j]=1;
+          break;
+        case 5:
+          //folk position
+          folk_x = i;
+          folk_y = j;
+          currentLevelFolk[i][j]=1;
+          currentLevelFloor[i][j]=1;
+          break;
+        case 3:
+          //normal box
+          boxesCount++;
+          currentLevelBox[i][j]=1;
+          currentLevelFloor[i][j]=1;
+          break;
+        case 4:
+          //done box
+          boxesCount++;
+          currentLevelBox[i][j]=1;
+          currentLevelFloor[i][j]=2;
+          break;
+        case 2:
+          //empty spot
+          currentLevelFloor[i][j]=2;
+          break;
+      }
+    }
+  }
+  debugLevel();
+}
+
+void restartLevel(int level) {
+  initAngles();
+  resetLevel();
+  readLevel(level);
+}
 
 void defineDirections() {
   directions[0][up][x_axis]=0;
@@ -68,19 +165,6 @@ void defineDirections() {
     directions[i][right][x_axis]=-directions[i][left][x_axis];
     directions[i][right][y_axis]=-directions[i][left][y_axis];
   }
-}
-
-string toString(int number) {
-  if (number == 0) return "0";
-  string temp="";
-  string returnvalue="";
-  while (number>0) {
-    temp+=number%10+48;
-    number/=10;
-  }
-  for (int i=0;i<temp.length();i++)
-    returnvalue+=temp[temp.length()-i-1];
-  return returnvalue;
 }
 
 void move(int direction) {
@@ -117,7 +201,6 @@ void renderSqaure () {
 }
 
 void drawFloor(glm::mat4 V) {
-  cout << rotation << endl;
   boxesDone = 0;
   glm::mat4 M=glm::mat4(1.0f);
   glLoadMatrixf(glm::value_ptr(V*M));
@@ -207,6 +290,7 @@ void nextFrame(void) {
 }
 
 void keyDown(int c, int x, int y) {
+  cout << c <<  endl;
   switch (c) {
     case GLUT_KEY_LEFT:
       move(left);
@@ -248,6 +332,10 @@ void keyDown(int c, int x, int y) {
       //zoom out
       zoom-=1;
       break;
+    case 114:
+      //reset level
+      restartLevel(currentLevel);
+      break;
   }
 }
 
@@ -262,78 +350,9 @@ void keyUp(int c, int x, int y) {
   }
 }
 
-void debugLevel() {
-  for(int i=0; i<levelSize; i++) {
-    for(int j=0; j<levelSize; j++) {
-      cout << currentLevelFloor[i][j] << " ";
-    }
-    cout << endl;
-  }
-}
-
-void resetLevel() {
-  for(int i=0; i<levelSize; i++) {
-    for(int j=0; j<levelSize; j++) {
-      currentLevelFields[i][j]=0;
-      currentLevelFloor[i][j]=0;
-      currentLevelBox[i][j]=0;
-      currentLevelFolk[i][j]=0;
-    }
-  }
-}
-
-void readLevel(int level) {
-  resetLevel();
-  currentLevel = level;
-  int size = -1, field;
-  string filePath = "levels/" + toString(level) + ".level";
-  ifstream levelFile(filePath.c_str());
-  levelFile >> levelSize;
-  for(int i=0; i<levelSize; i++) {
-    for(int j=0; j<levelSize; j++) {
-      levelFile >> field;
-      // Floor:
-      //   2: spot
-      //   3: normal floor
-      if (field>0) currentLevelFloor[i][j]=1;
-      switch(field) {
-        case 9:
-          //borders
-          currentLevelFields[i][j]=1;
-          currentLevelFloor[i][j]=1;
-          break;
-        case 5:
-          //folk position
-          folk_x = i;
-          folk_y = j;
-          currentLevelFolk[i][j]=1;
-          currentLevelFloor[i][j]=1;
-          break;
-        case 3:
-          //normal box
-          boxesCount++;
-          currentLevelBox[i][j]=1;
-          currentLevelFloor[i][j]=1;
-          break;
-        case 4:
-          //done box
-          boxesCount++;
-          currentLevelBox[i][j]=1;
-          currentLevelFloor[i][j]=2;
-          break;
-        case 2:
-          //empty spot
-          currentLevelFloor[i][j]=2;
-          break;
-      }
-    }
-  }
-  debugLevel();
-}
-
 int main(int argc, char* argv[]) {
   defineDirections();
-  readLevel(1);
+  restartLevel(currentLevel);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(800,600);
