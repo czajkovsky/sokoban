@@ -12,12 +12,32 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+using namespace std;
+
 #define up 1
 #define down 2
 #define left 3
 #define right 4
+#define x_axis 0
+#define y_axis 1
 
-using namespace std;
+int directions[4][4][2];
+
+void defineDirections() {
+  directions[0][up][x_axis]=0;
+  directions[0][up][y_axis]=1;
+  directions[0][left][x_axis]=1;
+  directions[0][left][y_axis]=0;
+
+  for(int i=0; i<4; i++) {
+    directions[i][down][x_axis]=-directions[i][up][x_axis];
+    directions[i][down][y_axis]=-directions[i][up][y_axis];
+    directions[i][right][x_axis]=-directions[i][left][x_axis];
+    directions[i][right][y_axis]=-directions[i][left][y_axis];
+  }
+}
+
+int rotation = 0;
 
 float speed_x=0;
 float speed_y=0;
@@ -26,6 +46,7 @@ float angle_x=45;
 int angle_y;
 float zoom = -15;
 
+int folk_x, folk_y;
 int currentLevelFields[10][10];
 int currentLevelBox[10][10];
 int currentLevelFolk[10][10];
@@ -51,8 +72,12 @@ string toString(int number) {
 }
 
 void move(int direction) {
-  cout << direction << endl;
+  currentLevelFolk[folk_x][folk_y]=0;
 
+  folk_y += directions[rotation][direction][y_axis];
+  folk_x+= directions[rotation][direction][x_axis];
+
+  currentLevelFolk[folk_x][folk_y]=1;
 }
 
 void drawFloor(glm::mat4 V) {
@@ -239,6 +264,8 @@ void readLevel(int level) {
           break;
         case 5:
           //folk position
+          folk_x = i;
+          folk_y = j;
           currentLevelFolk[i][j]=1;
           currentLevelFloor[i][j]=1;
           break;
@@ -263,6 +290,7 @@ void readLevel(int level) {
 }
 
 int main(int argc, char* argv[]) {
+  defineDirections();
   readLevel(1);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
