@@ -22,6 +22,28 @@ using namespace std;
 #define y_axis 1
 
 int directions[4][4][2];
+int rotation = 0;
+
+float speed_x=0;
+float speed_y=0;
+int lastTime=0;
+float angle_x=45;
+int angle_y;
+float zoom = -15;
+
+int folk_x, folk_y;
+int currentLevelFields[10][10];
+int currentLevelBox[10][10];
+int currentLevelFolk[10][10];
+int currentLevelFloor[10][10];
+int levelSize = -1;
+int currentLevel = -1;
+int boxesCount = 0, boxesDone = 0;
+
+float angle = 0;
+
+int window_id = -1;
+
 void defineDirections() {
   directions[0][up][x_axis]=0;
   directions[0][up][y_axis]=1;
@@ -47,27 +69,6 @@ void defineDirections() {
     directions[i][right][y_axis]=-directions[i][left][y_axis];
   }
 }
-
-int rotation = 0;
-
-float speed_x=0;
-float speed_y=0;
-int lastTime=0;
-float angle_x=45;
-int angle_y;
-float zoom = -15;
-
-int folk_x, folk_y;
-int currentLevelFields[10][10];
-int currentLevelBox[10][10];
-int currentLevelFolk[10][10];
-int currentLevelFloor[10][10];
-int levelSize = -1;
-int currentLevel = -1;
-
-float angle = 0;
-
-int window_id = -1;
 
 string toString(int number) {
   if (number == 0) return "0";
@@ -106,27 +107,44 @@ void move(int direction) {
   }
 }
 
+void renderSqaure () {
+  glBegin(GL_QUADS);
+  glVertex3f(-0.5f, -0.5f, 0.5f);
+  glVertex3f(-0.5f, 0.5f, 0.5f);
+  glVertex3f(0.5f, 0.5f, 0.5f);
+  glVertex3f(0.5f, -0.5f, 0.5f);
+  glEnd();
+}
+
 void drawFloor(glm::mat4 V) {
+  boxesDone = 0;
   glm::mat4 M=glm::mat4(1.0f);
   glLoadMatrixf(glm::value_ptr(V*M));
-
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      if (currentLevelFields[i][j]==1) {
-        glColor3d(255, 255, 255);
+      if (currentLevelFields[i][j] == 1) {
+        glColor3d(0.9f, 0.9f, 0.9f);
         glutSolidCube(1.0);
       }
-      if (currentLevelBox[i][j]==1) {
-        glColor3d(255, 0, 0);
-        glutSolidCube(1.0);
-      }
-      else if (currentLevelBox[i][j]==2) {
-        glColor3d(255, 255, 0);
-        glutSolidCube(1.0);
+      if (currentLevelBox[i][j] == 1) {
+        if (currentLevelFloor[i][j] == 2) {
+          boxesDone++;
+          glColor3d(1.0f, 0.39f, 0.0f);
+          glutSolidCube(1.0);
+        }
+        else {
+          glColor3d(1.0f, 0.56f, 0.27f);
+          glutSolidCube(1.0);
+        }
       }
       if (currentLevelFolk[i][j]) {
-        glColor3d(255, 0, 255);
+        glColor3d(1.0f, 0.0f, 0.0f);
         glutSolidCube(1.0);
+      }
+      if (currentLevelFloor[i][j]) {
+        if (currentLevelFloor[i][j] == 2) glColor3f(0.5f, 0.5f, 0.5f);
+        else glColor3f(0.6f, 0.1f, 0.1f);
+        renderSqaure();
       }
       M=glm::translate(M,glm::vec3(0.0f, 1.0f, 0.0f));
       glLoadMatrixf(glm::value_ptr(V*M));
@@ -246,7 +264,7 @@ void keyUp(int c, int x, int y) {
 void debugLevel() {
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      cout << currentLevelFields[i][j] << " ";
+      cout << currentLevelFloor[i][j] << " ";
     }
     cout << endl;
   }
@@ -273,16 +291,10 @@ void readLevel(int level) {
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
       levelFile >> field;
-      // Fields:
-      //   1: border exists
-      // Folk:
-      //   1: fols exists
-      // Box:
-      //   1: normal box
-      //   2: done box
       // Floor:
       //   2: spot
       //   3: normal floor
+      if (field>0) currentLevelFloor[i][j]=1;
       switch(field) {
         case 9:
           //borders
@@ -298,12 +310,14 @@ void readLevel(int level) {
           break;
         case 3:
           //normal box
+          boxesCount++;
           currentLevelBox[i][j]=1;
           currentLevelFloor[i][j]=1;
           break;
         case 4:
           //done box
-          currentLevelBox[i][j]=2;
+          boxesCount++;
+          currentLevelBox[i][j]=1;
           currentLevelFloor[i][j]=2;
           break;
         case 2:
