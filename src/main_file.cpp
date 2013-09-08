@@ -178,6 +178,7 @@ void resetLevel() {
 }
 
 void readLevel(int level) {
+  resetLevel();
   currentLevel = level;
   int size = -1, field;
   string filePath = "levels/" + toString(level) + ".level";
