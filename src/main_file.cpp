@@ -166,6 +166,17 @@ void debugLevel() {
   }
 }
 
+void resetLevel() {
+  for(int i=0; i<levelSize; i++) {
+    for(int j=0; j<levelSize; j++) {
+      currentLevelFields[i][j]=0;
+      currentLevelFloor[i][j]=0;
+      currentLevelBox[i][j]=0;
+      currentLevelFolk[i][j]=0;
+    }
+  }
+}
+
 void readLevel(int level) {
   currentLevel = level;
   int size = -1, field;
