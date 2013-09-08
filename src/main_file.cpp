@@ -12,6 +12,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define up 1
+#define down 2
+#define left 3
+#define right 4
+
 using namespace std;
 
 float speed_x=0;
@@ -43,6 +48,11 @@ string toString(int number) {
   for (int i=0;i<temp.length();i++)
     returnvalue+=temp[temp.length()-i-1];
   return returnvalue;
+}
+
+void move(int direction) {
+  cout << direction << endl;
+
 }
 
 void drawFloor(glm::mat4 V) {
@@ -128,15 +138,31 @@ void nextFrame(void) {
 void keyDown(int c, int x, int y) {
   switch (c) {
     case GLUT_KEY_LEFT:
-      angle_y+=90;
+      move(left);
       break;
     case GLUT_KEY_RIGHT:
-      angle_y-=90;
+      move(right);
       break;
     case GLUT_KEY_UP:
-      speed_x=-60;
+      move(up);
       break;
     case GLUT_KEY_DOWN:
+      move(down);
+      break;
+    case 122:
+      // camera left
+      angle_y+=90;
+      break;
+    case 120:
+      // camera right
+      angle_y-=90;
+      break;
+    case 99:
+      // camera up
+      speed_x=-60;
+      break;
+    case 118:
+      // camera down
       speed_x=60;
       break;
     case 27:
@@ -156,16 +182,10 @@ void keyDown(int c, int x, int y) {
 
 void keyUp(int c, int x, int y) {
   switch (c) {
-    case GLUT_KEY_LEFT:
-      speed_y=0;
-      break;
-    case GLUT_KEY_RIGHT:
-      speed_y=-0;
-      break;
-    case GLUT_KEY_UP:
+    case 99:
       speed_x=0;
       break;
-    case GLUT_KEY_DOWN:
+    case 118:
       speed_x=-0;
       break;
   }
