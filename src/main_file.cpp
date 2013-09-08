@@ -22,7 +22,6 @@ using namespace std;
 #define y_axis 1
 
 int directions[4][4][2];
-
 void defineDirections() {
   directions[0][up][x_axis]=0;
   directions[0][up][y_axis]=1;
@@ -84,12 +83,17 @@ string toString(int number) {
 }
 
 void move(int direction) {
-  currentLevelFolk[folk_x][folk_y]=0;
-
-  folk_y += directions[rotation][direction][y_axis];
-  folk_x+= directions[rotation][direction][x_axis];
-
-  currentLevelFolk[folk_x][folk_y]=1;
+  int new_folk_y, new_folk_x;
+  int move_allowed = 1;
+  new_folk_y = folk_y + directions[rotation][direction][y_axis];
+  new_folk_x = folk_x + directions[rotation][direction][x_axis];
+  if (currentLevelFields[new_folk_x][new_folk_y]) move_allowed=0;
+  if (move_allowed) {
+    currentLevelFolk[folk_x][folk_y]=0;
+    folk_x = new_folk_x;
+    folk_y = new_folk_y;
+    currentLevelFolk[folk_x][folk_y]=1;
+  }
 }
 
 void drawFloor(glm::mat4 V) {
