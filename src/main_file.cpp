@@ -51,7 +51,22 @@ void drawFloor(glm::mat4 V) {
 
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      if (currentLevelFields[i][j]==1) glutSolidCube(1.0);
+      if (currentLevelFields[i][j]==1) {
+        glColor3d(255, 255, 255);
+        glutSolidCube(1.0);
+      }
+      if (currentLevelBox[i][j]==1) {
+        glColor3d(255, 0, 0);
+        glutSolidCube(1.0);
+      }
+      else if (currentLevelBox[i][j]==2) {
+        glColor3d(255, 255, 0);
+        glutSolidCube(1.0);
+      }
+      if (currentLevelFolk[i][j]) {
+        glColor3d(255, 0, 255);
+        glutSolidCube(1.0);
+      }
       M=glm::translate(M,glm::vec3(0.0f, 1.0f, 0.0f));
       glLoadMatrixf(glm::value_ptr(V*M));
     }
@@ -102,7 +117,6 @@ void nextFrame(void) {
 	lastTime=actTime;
   angle_x+=speed_x*interval/1000.0;
 	angle+=speed_x*interval/1000.0;
-	// angle_y+=speed_y*interval/1000.0;
 	if (angle_x>90) angle_x=90;
   if (angle_x<0) angle_x=0;
 	if (angle_y>360) angle_y-=360;
