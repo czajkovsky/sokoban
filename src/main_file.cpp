@@ -19,7 +19,7 @@ float speed_y=0; //60 stopni/s
 int lastTime=0;
 float angle_x;
 float angle_y;
-float zoom = -5;
+float zoom = -15;
 
 int currentLevelFields[10][10];
 int levelSize = -1;
@@ -42,35 +42,48 @@ string toString(int number) {
   return returnvalue;
 }
 
-void drawFloor() {
-  // glutSolidCube(0.5);
-  glutSolidTeapot(0.8);
+void drawFloor(glm::mat4 V) {
+  int offset = -levelSize/2;
+  glm::mat4 M=glm::mat4(1.0f);
+  M=glm::translate(M,glm::vec3(offset, 0.0f, 0.0f));
+  glLoadMatrixf(glm::value_ptr(V*M));
+
+  for(int i=0; i<levelSize; i++) {
+    for(int j=0; j<levelSize; j++) {
+      if (currentLevelFields[i][j]==9) glutSolidCube(1.0);
+      M=glm::translate(M,glm::vec3(0.0f, 1.0f, 0.0f));
+      glLoadMatrixf(glm::value_ptr(V*M));
+    }
+    M=glm::translate(M,glm::vec3(1.0f, float(-levelSize), 0.0f));
+    glLoadMatrixf(glm::value_ptr(V*M));
+  }
 }
 
 void displayFrame(void) {
+
 	glClearColor(0,0,0,1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 M=glm::mat4(1.0f);
-    M=glm::rotate(M,angle_x,glm::vec3(1.0f,0.0f,0.0f));
-    M=glm::rotate(M,angle_y,glm::vec3(0.0f,1.0f,0.0f));
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    drawFloor();
+  glm::mat4 V=glm::lookAt(
+    glm::vec3(0.0f, 0.0f, zoom),
+    glm::vec3(0.0f, 0.0f, 0.0f),
+    glm::vec3(0.0f, 1.0f, 0.0f));
 
-    glm::mat4 V=glm::lookAt(
-      glm::vec3(0.0f, 0.0f, zoom),
-      glm::vec3(0.0f, 0.0f, 0.0f),
-      glm::vec3(0.0f, 1.0f, 0.0f));
+  //rotation by arrows
+  V=glm::rotate(V,angle_x,glm::vec3(1.0f,0.0f,0.0f));
+  V=glm::rotate(V,angle_y,glm::vec3(0.0f,1.0f,0.0f));
 
-    glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
+  //objects closer than 1.0 and further than 50.0 are hidden
+  glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(glm::value_ptr(P));
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(glm::value_ptr(V*M));
+  drawFloor(V);
 
+  glMatrixMode(GL_PROJECTION);
+  glLoadMatrixf(glm::value_ptr(P));
+  glMatrixMode(GL_MODELVIEW);
 
-    glutSwapBuffers();
+  glutSwapBuffers();
 }
 
 void quit() {
@@ -102,10 +115,10 @@ void keyDown(int c, int x, int y) {
       speed_y=-60;
       break;
     case GLUT_KEY_UP:
-      speed_x=60;
+      speed_x=-60;
       break;
     case GLUT_KEY_DOWN:
-      speed_x=-60;
+      speed_x=60;
       break;
     case 27:
       //ESC
@@ -182,7 +195,6 @@ int main(int argc, char* argv[]) {
 	glEnable(GL_DEPTH_TEST);
   // glShadeModel(GL_SMOOTH);
   glEnable(GL_COLOR_MATERIAL);
-
-        glutMainLoop();
-        return 0;
+  glutMainLoop();
+  return 0;
 }
