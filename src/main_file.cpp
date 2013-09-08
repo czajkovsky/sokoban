@@ -22,6 +22,9 @@ float angle_y;
 float zoom = -15;
 
 int currentLevelFields[10][10];
+int currentLevelBox[10][10];
+int currentLevelFolk[10][10];
+int currentLevelFloor[10][10];
 int levelSize = -1;
 int currentLevel = -1;
 
@@ -48,7 +51,7 @@ void drawFloor(glm::mat4 V) {
 
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      if (currentLevelFields[i][j]==9) glutSolidCube(1.0);
+      if (currentLevelFields[i][j]==1) glutSolidCube(1.0);
       M=glm::translate(M,glm::vec3(0.0f, 1.0f, 0.0f));
       glLoadMatrixf(glm::value_ptr(V*M));
     }
@@ -165,13 +168,49 @@ void debugLevel() {
 
 void readLevel(int level) {
   currentLevel = level;
-  int size = -1;
+  int size = -1, field;
   string filePath = "levels/" + toString(level) + ".level";
   ifstream levelFile(filePath.c_str());
   levelFile >> levelSize;
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      levelFile >> currentLevelFields[i][j];
+      levelFile >> field;
+      // Fields:
+      //   1: border exists
+      // Folk:
+      //   1: fols exists
+      // Box:
+      //   1: normal box
+      //   2: done box
+      // Floor:
+      //   2: spot
+      //   3: normal floor
+      switch(field) {
+        case 9:
+          //borders
+          currentLevelFields[i][j]=1;
+          currentLevelFloor[i][j]=1;
+          break;
+        case 5:
+          //folk position
+          currentLevelFolk[i][j]=1;
+          currentLevelFloor[i][j]=1;
+          break;
+        case 3:
+          //normal box
+          currentLevelBox[i][j]=1;
+          currentLevelFloor[i][j]=1;
+          break;
+        case 4:
+          //done box
+          currentLevelBox[i][j]=2;
+          currentLevelFloor[i][j]=2;
+          break;
+        case 2:
+          //empty spot
+          currentLevelFloor[i][j]=2;
+          break;
+      }
     }
   }
   debugLevel();
