@@ -290,7 +290,6 @@ void nextFrame(void) {
 }
 
 void keyDown(int c, int x, int y) {
-  cout << c <<  endl;
   switch (c) {
     case GLUT_KEY_LEFT:
       move(left);
@@ -361,15 +360,16 @@ int main(int argc, char* argv[]) {
 	glutDisplayFunc(displayFrame);
 	glutIdleFunc(nextFrame);
 
-	//Tutaj kod inicjujacy
 	glewInit();
 	glutSpecialFunc(keyDown);
 	glutSpecialUpFunc(keyUp);
-
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHT1);
 	glEnable(GL_DEPTH_TEST);
-  // glShadeModel(GL_SMOOTH);
+  glShadeModel(GL_SMOOTH);
   glEnable(GL_COLOR_MATERIAL);
   glutMainLoop();
   return 0;
