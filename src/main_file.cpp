@@ -356,7 +356,7 @@ int main(int argc, char* argv[]) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(800,600);
 	glutInitWindowPosition(0,0);
-	window_id = glutCreateWindow("Program OpenGL");
+	window_id = glutCreateWindow("Sokoban 3D");
 	glutDisplayFunc(displayFrame);
 	glutIdleFunc(nextFrame);
 
