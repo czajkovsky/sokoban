@@ -87,12 +87,16 @@ void move(int direction) {
   int move_allowed = 1;
   new_folk_x = folk_x + directions[rotation][direction][x_axis];
   new_folk_y = folk_y + directions[rotation][direction][y_axis];
-  if (currentLevelFields[new_folk_x][new_folk_y]) move_allowed=0;
+  if (currentLevelFields[new_folk_x][new_folk_y]) move_allowed= 0;
   if (move_allowed && currentLevelBox[new_folk_x][new_folk_y]){
     int new_box_x = new_folk_x + directions[rotation][direction][x_axis];
     int new_box_y = new_folk_y + directions[rotation][direction][y_axis];
     if (currentLevelFields[new_box_x][new_box_y]) move_allowed = 0;
-    if (currentLevelBox[new_box_x][new_box_y]) move_allowed =0;
+    if (currentLevelBox[new_box_x][new_box_y]) move_allowed = 0;
+    if (move_allowed) {
+      currentLevelBox[new_box_x][new_box_y] = 1;
+      currentLevelBox[new_folk_x][new_folk_y] = 0;
+    }
   }
   if (move_allowed) {
     currentLevelFolk[folk_x][folk_y]=0;
