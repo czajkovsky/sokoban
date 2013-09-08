@@ -20,6 +20,7 @@ using namespace std;
 #define right 4
 #define x_axis 0
 #define y_axis 1
+#define last_level 3
 
 int directions[4][4][2];
 int rotation = 0;
@@ -88,6 +89,7 @@ void resetLevel() {
 
 void readLevel(int level) {
   resetLevel();
+  boxesCount = 0;
   currentLevel = level;
   int size = -1, field;
   string filePath = "levels/" + toString(level) + ".level";
@@ -200,7 +202,7 @@ void renderSqaure () {
   glEnd();
 }
 
-void drawFloor(glm::mat4 V) {
+int drawFloor(glm::mat4 V) {
   boxesDone = 0;
   glm::mat4 M=glm::mat4(1.0f);
   glLoadMatrixf(glm::value_ptr(V*M));
@@ -236,6 +238,7 @@ void drawFloor(glm::mat4 V) {
     M=glm::translate(M,glm::vec3(1.0f, float(-levelSize), 0.0f));
     glLoadMatrixf(glm::value_ptr(V*M));
   }
+  return boxesDone;
 }
 
 void displayFrame(void) {
@@ -260,7 +263,10 @@ void displayFrame(void) {
   //objects closer than 1.0 and further than 50.0 are hidden
   glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
 
-  drawFloor(V);
+  if(drawFloor(V)==boxesCount && currentLevel < last_level) {
+    currentLevel++;
+    restartLevel(currentLevel);
+  }
 
   glMatrixMode(GL_PROJECTION);
   glLoadMatrixf(glm::value_ptr(P));
