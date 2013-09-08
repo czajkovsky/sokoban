@@ -18,7 +18,7 @@ float speed_x=0;
 float speed_y=0;
 int lastTime=0;
 float angle_x=45;
-float angle_y;
+int angle_y;
 float zoom = -15;
 
 int currentLevelFields[10][10];
@@ -73,7 +73,7 @@ void displayFrame(void) {
 
   //rotation by arrows
   V=glm::rotate(V, angle_x, glm::vec3(1.0f, 0.0f, 0.0f));
-  V=glm::rotate(V, angle_y, glm::vec3(0.0f, 0.0f, 1.0f));
+  V=glm::rotate(V, float(angle_y), glm::vec3(0.0f, 0.0f, 1.0f));
 
   //centering board
   float offset = -float(levelSize)/2;
@@ -102,9 +102,9 @@ void nextFrame(void) {
 	lastTime=actTime;
   angle_x+=speed_x*interval/1000.0;
 	angle+=speed_x*interval/1000.0;
-	angle_y+=speed_y*interval/1000.0;
-	if (angle_x>360) angle_x-=360;
-	if (angle_x>360) angle_x+=360;
+	// angle_y+=speed_y*interval/1000.0;
+	if (angle_x>90) angle_x=90;
+  if (angle_x<0) angle_x=0;
 	if (angle_y>360) angle_y-=360;
 	if (angle_y>360) angle_y+=360;
 
@@ -114,10 +114,10 @@ void nextFrame(void) {
 void keyDown(int c, int x, int y) {
   switch (c) {
     case GLUT_KEY_LEFT:
-      speed_y=60;
+      angle_y+=90;
       break;
     case GLUT_KEY_RIGHT:
-      speed_y=-60;
+      angle_y-=90;
       break;
     case GLUT_KEY_UP:
       speed_x=-60;
