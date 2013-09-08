@@ -14,10 +14,10 @@
 
 using namespace std;
 
-float speed_x=0; //60 stopni/s
-float speed_y=0; //60 stopni/s
+float speed_x=0;
+float speed_y=0;
 int lastTime=0;
-float angle_x;
+float angle_x=45;
 float angle_y;
 float zoom = -15;
 
@@ -43,9 +43,7 @@ string toString(int number) {
 }
 
 void drawFloor(glm::mat4 V) {
-  int offset = -levelSize/2;
   glm::mat4 M=glm::mat4(1.0f);
-  M=glm::translate(M,glm::vec3(offset, 0.0f, 0.0f));
   glLoadMatrixf(glm::value_ptr(V*M));
 
   for(int i=0; i<levelSize; i++) {
@@ -71,8 +69,12 @@ void displayFrame(void) {
     glm::vec3(0.0f, 1.0f, 0.0f));
 
   //rotation by arrows
-  V=glm::rotate(V,angle_x,glm::vec3(1.0f,0.0f,0.0f));
-  V=glm::rotate(V,angle_y,glm::vec3(0.0f,1.0f,0.0f));
+  V=glm::rotate(V, angle_x, glm::vec3(1.0f, 0.0f, 0.0f));
+  V=glm::rotate(V, angle_y, glm::vec3(0.0f, 0.0f, 1.0f));
+
+  //centering board
+  float offset = -float(levelSize)/2;
+  V=glm::translate(V, glm::vec3(offset, offset, 0.0f));
 
   //objects closer than 1.0 and further than 50.0 are hidden
   glm::mat4 P=glm::perspective(50.0f, 1.0f, 1.0f, 50.0f);
