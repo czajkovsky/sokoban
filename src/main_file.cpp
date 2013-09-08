@@ -117,6 +117,7 @@ void renderSqaure () {
 }
 
 void drawFloor(glm::mat4 V) {
+  cout << rotation << endl;
   boxesDone = 0;
   glm::mat4 M=glm::mat4(1.0f);
   glLoadMatrixf(glm::value_ptr(V*M));
@@ -198,8 +199,8 @@ void nextFrame(void) {
 	angle+=speed_x*interval/1000.0;
 	if (angle_x>90) angle_x=90;
   if (angle_x<0) angle_x=0;
-	if (angle_y>360) angle_y-=360;
-	if (angle_y>360) angle_y+=360;
+	if (angle_y==360) angle_y=0;
+	if (angle_y<0) angle_y+=360;
   rotation = angle_y/90;
 
 	glutPostRedisplay();
