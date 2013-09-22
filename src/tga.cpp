@@ -1,7 +1,7 @@
 #include "tga.h"
 
 TGAImg::TGAImg()
-{ 
+{
 	pImage=pPalette=pData=NULL;
 	iWidth=iHeight=iBPP=bEnc=0;
 	lImageSize=0;
@@ -64,7 +64,7 @@ int TGAImg::Load(char* szFilename)
 	// Allocate some space
 	// Check and clear pDat, just in case
 	if(pData)
-		delete [] pData; 
+		delete [] pData;
 
 	pData=new unsigned char[ulSize];
 
@@ -168,7 +168,7 @@ int TGAImg::Load(char* szFilename)
 	}
 
 	// Check flip bit
-	if((pData[17] & 0x20)==0) 
+	if((pData[17] & 0x20)==0)
 		FlipImg();
 
 	// Release file memory
@@ -274,7 +274,7 @@ int TGAImg::LoadTgaRLEData() // Load RLE compressed image data
 
 	// Add palette offset for indexed images
 	if(pData[1]==1)
-		iOffset+=768; 
+		iOffset+=768;
 
 	// Get pixel size in bytes
 	iPixelSize=iBPP/8;
@@ -292,12 +292,12 @@ int TGAImg::LoadTgaRLEData() // Load RLE compressed image data
 		return IMG_ERR_MEM_FAIL;
 
 	// Decode
-	while(Index<lImageSize) 
+	while(Index<lImageSize)
 	{
 		if(*pCur & 0x80) // Run length chunk (High bit = 1)
 		{
 			bLength=*pCur-127; // Get run length
-			pCur++;            // Move to pixel data  
+			pCur++;            // Move to pixel data
 
 			// Repeat the next pixel bLength times
 			for(bLoop=0;bLoop!=bLength;++bLoop,Index+=iPixelSize)
@@ -397,14 +397,14 @@ void TGAImg::FlipImg() // Flips the image vertically (Why store images upside do
 		{
 			bTemp=*pLine1;
 			*pLine1=*pLine2;
-			*pLine2=bTemp;       
+			*pLine2=bTemp;
 		}
-	} 
+	}
 
 }
 
 
-int TGAImg::GetBPP() 
+int TGAImg::GetBPP()
 {
 	return iBPP;
 }

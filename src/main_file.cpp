@@ -22,6 +22,9 @@ using namespace std;
 #define y_axis 1
 #define last_level 3
 
+GLuint tex;
+TGAImg img;
+
 int directions[4][4][2];
 int rotation = 0;
 
@@ -65,6 +68,20 @@ void initAngles() {
   angle_x=45;
   angle_y = 0;
   zoom = -15;
+}
+
+void loadTexture() {
+  if (img.Load("./res/bricks.tga") == IMG_OK) {
+    glGenTextures(1,&tex);
+    glBindTexture(GL_TEXTURE_2D,tex);
+    if (img.GetBPP() >= 24) {
+      glTexImage2D(GL_TEXTURE_2D, 0, img.GetBPP()/8, img.GetWidth(), img.GetHeight(), 0,  GL_RGB,GL_UNSIGNED_BYTE, img.GetImg());
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
+  }
 }
 
 void debugLevel() {
@@ -202,6 +219,17 @@ void renderSqaure () {
   glEnd();
 }
 
+void drawCube() {
+  glBindTexture(GL_TEXTURE_2D,tex);
+  glEnableClientState(GL_VERTEX_ARRAY );
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glVertexPointer( 3, GL_FLOAT, 0, cubeVertices);
+  glTexCoordPointer( 2, GL_FLOAT, 0, cubeTexCoords);
+  glDrawArrays( GL_QUADS, 0, cubeVertexCount);
+  glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
 int drawFloor(glm::mat4 V) {
   boxesDone = 0;
   glm::mat4 M=glm::mat4(1.0f);
@@ -210,7 +238,8 @@ int drawFloor(glm::mat4 V) {
     for(int j=0; j<levelSize; j++) {
       if (currentLevelFields[i][j] == 1) {
         glColor3d(0.9f, 0.9f, 0.9f);
-        glutSolidCube(1.0);
+        drawCube();
+
       }
       if (currentLevelBox[i][j] == 1) {
         if (currentLevelFloor[i][j] == 2) {
@@ -232,6 +261,7 @@ int drawFloor(glm::mat4 V) {
         else glColor3f(0.6f, 0.1f, 0.1f);
         renderSqaure();
       }
+
       M=glm::translate(M,glm::vec3(0.0f, 1.0f, 0.0f));
       glLoadMatrixf(glm::value_ptr(V*M));
     }
@@ -377,6 +407,10 @@ int main(int argc, char* argv[]) {
 	glEnable(GL_DEPTH_TEST);
   glShadeModel(GL_SMOOTH);
   glEnable(GL_COLOR_MATERIAL);
+
+  glEnable(GL_TEXTURE_2D);
+
+  loadTexture();
   glutMainLoop();
   return 0;
 }
