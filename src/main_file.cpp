@@ -223,10 +223,13 @@ void drawCube() {
   glBindTexture(GL_TEXTURE_2D,tex);
   glEnableClientState(GL_VERTEX_ARRAY );
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
   glVertexPointer( 3, GL_FLOAT, 0, cubeVertices);
+  glNormalPointer( GL_FLOAT, 0, cubeNormals);
   glTexCoordPointer( 2, GL_FLOAT, 0, cubeTexCoords);
   glDrawArrays( GL_QUADS, 0, cubeVertexCount);
   glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
@@ -409,6 +412,7 @@ int main(int argc, char* argv[]) {
   glEnable(GL_COLOR_MATERIAL);
 
   glEnable(GL_TEXTURE_2D);
+  glEnable(GL_NORMALIZE);
 
   loadTexture();
   glutMainLoop();
