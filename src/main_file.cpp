@@ -22,7 +22,7 @@ using namespace std;
 #define y_axis 1
 #define last_level 3
 
-GLuint tex;
+GLuint tex[10];
 TGAImg img;
 
 int directions[4][4][2];
@@ -70,10 +70,10 @@ void initAngles() {
   zoom = -15;
 }
 
-void loadTexture() {
-  if (img.Load("./res/bricks.tga") == IMG_OK) {
-    glGenTextures(1,&tex);
-    glBindTexture(GL_TEXTURE_2D,tex);
+void loadTexture(char* path, int id) {
+  if (img.Load(path) == IMG_OK) {
+    glGenTextures(1,&tex[id]);
+    glBindTexture(GL_TEXTURE_2D,tex[id]);
     if (img.GetBPP() >= 24) {
       glTexImage2D(GL_TEXTURE_2D, 0, img.GetBPP()/8, img.GetWidth(), img.GetHeight(), 0,  GL_RGB,GL_UNSIGNED_BYTE, img.GetImg());
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -151,7 +151,6 @@ void readLevel(int level) {
       }
     }
   }
-  debugLevel();
 }
 
 void restartLevel(int level) {
@@ -219,13 +218,11 @@ void renderSqaure () {
   glEnd();
 }
 
-void drawCube() {
-  glBindTexture(GL_TEXTURE_2D,tex);
+void drawCube(int texture_id) {
+  glBindTexture(GL_TEXTURE_2D,tex[texture_id]);
   glEnableClientState(GL_VERTEX_ARRAY );
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glEnableClientState(GL_NORMAL_ARRAY);
   glVertexPointer( 3, GL_FLOAT, 0, cubeVertices);
-  glNormalPointer( GL_FLOAT, 0, cubeNormals);
   glTexCoordPointer( 2, GL_FLOAT, 0, cubeTexCoords);
   glDrawArrays( GL_QUADS, 0, cubeVertexCount);
   glDisableClientState( GL_VERTEX_ARRAY );
@@ -237,34 +234,23 @@ int drawFloor(glm::mat4 V) {
   boxesDone = 0;
   glm::mat4 M=glm::mat4(1.0f);
   glLoadMatrixf(glm::value_ptr(V*M));
+
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
-      if (currentLevelFields[i][j] == 1) {
-        glColor3d(0.9f, 0.9f, 0.9f);
-        drawCube();
-
-      }
+      if (currentLevelFields[i][j] == 1) drawCube(1);
       if (currentLevelBox[i][j] == 1) {
         if (currentLevelFloor[i][j] == 2) {
           boxesDone++;
-          glColor3d(1.0f, 0.39f, 0.0f);
-          glutSolidCube(1.0);
+          drawCube(4);
         }
-        else {
-          glColor3d(1.0f, 0.56f, 0.27f);
-          glutSolidCube(1.0);
-        }
+        else drawCube(3);
       }
-      if (currentLevelFolk[i][j]) {
-        glColor3d(1.0f, 0.0f, 0.0f);
-        glutSolidCube(1.0);
-      }
+      if (currentLevelFolk[i][j]) drawCube(2);
       if (currentLevelFloor[i][j]) {
-        if (currentLevelFloor[i][j] == 2) glColor3f(0.5f, 0.5f, 0.5f);
-        else glColor3f(0.6f, 0.1f, 0.1f);
-        renderSqaure();
+        // if (currentLevelFloor[i][j] == 2) glColor3f(0.5f, 0.5f, 0.5f);
+        // else glColor3f(0.6f, 0.1f, 0.1f);
+        // renderSqaure();
       }
-
       M=glm::translate(M,glm::vec3(0.0f, 1.0f, 0.0f));
       glLoadMatrixf(glm::value_ptr(V*M));
     }
@@ -300,6 +286,9 @@ void displayFrame(void) {
     currentLevel++;
     restartLevel(currentLevel);
   }
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixf(glm::value_ptr(V));
 
   glMatrixMode(GL_PROJECTION);
   glLoadMatrixf(glm::value_ptr(P));
@@ -404,17 +393,20 @@ int main(int argc, char* argv[]) {
 	glutSpecialUpFunc(keyUp);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHT1);
+	// glEnable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
   glShadeModel(GL_SMOOTH);
   glEnable(GL_COLOR_MATERIAL);
 
+
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_NORMALIZE);
 
-  loadTexture();
+  loadTexture("./res/bricks.tga", 1);
+  loadTexture("./res/folk.tga", 2);
+  loadTexture("./res/block.tga", 3);
+  loadTexture("./res/done.tga", 4);
+
   glutMainLoop();
   return 0;
 }
