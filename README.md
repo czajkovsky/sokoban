@@ -1,7 +1,10 @@
 sokoban
 =======
 
-Sokoban 3D in OpenGL.
+Simple Sokoban 3D in OpenGL.
+
+##About
+Project done for Computer Graphic classes @ PUT under [dr Witold Andrzejewski](https://www.cs.put.poznan.pl/wandrzejewski/main-page/).
 
 ##Usage
 
