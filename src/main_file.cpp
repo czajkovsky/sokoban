@@ -115,37 +115,29 @@ void readLevel(int level) {
   for(int i=0; i<levelSize; i++) {
     for(int j=0; j<levelSize; j++) {
       levelFile >> field;
-      // Floor:
-      //   2: spot
-      //   3: normal floor
       if (field>0) currentLevelFloor[i][j]=1;
       switch(field) {
-        case 9:
-          //borders
+        case 9: //borders
           currentLevelFields[i][j]=1;
           currentLevelFloor[i][j]=1;
           break;
-        case 5:
-          //folk position
+        case 5: //folk position
           folk_x = i;
           folk_y = j;
           currentLevelFolk[i][j]=1;
           currentLevelFloor[i][j]=1;
           break;
-        case 3:
-          //normal box
+        case 3: //normal box
           boxesCount++;
           currentLevelBox[i][j]=1;
           currentLevelFloor[i][j]=1;
           break;
-        case 4:
-          //done box
+        case 4: //done box
           boxesCount++;
           currentLevelBox[i][j]=1;
           currentLevelFloor[i][j]=2;
           break;
-        case 2:
-          //empty spot
+        case 2: //empty spot
           currentLevelFloor[i][j]=2;
           break;
       }
@@ -351,6 +343,7 @@ void nextFrame(void) {
   rotation = angle_y/90;
 
 	glutPostRedisplay();
+
 }
 
 void keyDown(int c, int x, int y) {
