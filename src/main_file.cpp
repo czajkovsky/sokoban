@@ -6,6 +6,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "tga.h"
 #include "cube.h"
+#include "wall.h"
 #include <iostream>
 #include <fstream>
 #include <string.h>
@@ -212,11 +213,23 @@ void renderSqaure () {
 
 void drawCube(int texture_id) {
   glBindTexture(GL_TEXTURE_2D,tex[texture_id]);
-  glEnableClientState(GL_VERTEX_ARRAY );
+  glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   glVertexPointer(3, GL_FLOAT, 0, cubeVertices);
   glTexCoordPointer(2, GL_FLOAT, 0, cubeTexCoords);
   glDrawArrays(GL_QUADS, 0, cubeVertexCount);
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void drawWall(int texture_id) {
+  glBindTexture(GL_TEXTURE_2D,tex[texture_id]);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glVertexPointer(3, GL_FLOAT, 0, wallVertices);
+  glTexCoordPointer(2, GL_FLOAT, 0, wallTexCoords);
+  glDrawArrays(GL_QUADS, 0, wallVertexCount);
   glDisableClientState(GL_VERTEX_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -239,9 +252,8 @@ int drawFloor(glm::mat4 V) {
       }
       if (currentLevelFolk[i][j]) drawCube(2);
       if (currentLevelFloor[i][j]) {
-        // if (currentLevelFloor[i][j] == 2) glColor3f(0.5f, 0.5f, 0.5f);
-        // else glColor3f(0.6f, 0.1f, 0.1f);
-        // renderSqaure();
+        if (currentLevelFloor[i][j] == 2) drawWall(6);
+        else drawWall(5);
       }
       M=glm::translate(M,glm::vec3(0.0f, 1.0f, 0.0f));
       glLoadMatrixf(glm::value_ptr(V*M));
@@ -436,6 +448,8 @@ int main(int argc, char* argv[]) {
   loadTexture("./res/folk.tga", 2);
   loadTexture("./res/block.tga", 3);
   loadTexture("./res/done.tga", 4);
+  loadTexture("./res/floor.tga", 5);
+  loadTexture("./res/spot.tga", 6);
 
   glutMainLoop();
 

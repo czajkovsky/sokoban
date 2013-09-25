@@ -2,7 +2,7 @@ LIBS=-framework OpenGL -lGLEW -framework GLUT
 CC=g++
 
 SRCS=main_file.cpp tga.cpp
-HDRS=tga.h cube.h
+HDRS=tga.h cube.h wall.h
 
 SOURCES=$(addprefix ./src/, $(SRCS))
 HEADERS=$(addprefix ./src/, $(HDRS))
