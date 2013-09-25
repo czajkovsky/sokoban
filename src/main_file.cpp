@@ -222,10 +222,10 @@ void drawCube(int texture_id) {
   glBindTexture(GL_TEXTURE_2D,tex[texture_id]);
   glEnableClientState(GL_VERTEX_ARRAY );
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glVertexPointer( 3, GL_FLOAT, 0, cubeVertices);
-  glTexCoordPointer( 2, GL_FLOAT, 0, cubeTexCoords);
-  glDrawArrays( GL_QUADS, 0, cubeVertexCount);
-  glDisableClientState( GL_VERTEX_ARRAY );
+  glVertexPointer(3, GL_FLOAT, 0, cubeVertices);
+  glTexCoordPointer(2, GL_FLOAT, 0, cubeTexCoords);
+  glDrawArrays(GL_QUADS, 0, cubeVertexCount);
+  glDisableClientState(GL_VERTEX_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
@@ -295,6 +295,42 @@ void displayFrame(void) {
   glMatrixMode(GL_MODELVIEW);
 
   glutSwapBuffers();
+}
+
+void initLight() {
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHT1);
+
+  GLfloat light_ambient[] = { 0.4, 0.4, 0.4, 0.1 };
+  GLfloat light_diffuse[] = { 0.2, 0.2, 0.2, 0.1 };
+  GLfloat light_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+  GLfloat light_position[] = { 3.0, 3.0, 30.0, 1.0 };
+  GLfloat light_spot_cutoff[] = { 11.0, 4.0, 9.0, 1.0 };
+  GLfloat light_spot_exponent[] = { 11.0, 4.0, 9.0, 1.0 };
+
+  glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+  glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+  glLightfv(GL_LIGHT1, GL_SPOT_CUTOFF, light_spot_cutoff);
+  glLightfv(GL_LIGHT1, GL_SPOT_EXPONENT, light_spot_exponent);
+
+  glEnable(GL_LIGHT2);
+
+  GLfloat light2_ambient[] = { 1.0, 1.0, 1.0, 0.7 };
+  GLfloat light2_diffuse[] = { 1.0, 1.0, 1.0, 0.7 };
+  GLfloat light2_specular[] = { 1.0, 1.0, 1.0, 0.9 };
+  GLfloat light2_position[] = { 0.0, 0.0, 20.0, 1.0 };
+
+  glLightfv(GL_LIGHT2, GL_AMBIENT, light2_ambient);
+  glLightfv(GL_LIGHT2, GL_DIFFUSE, light2_diffuse);
+  glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
+  glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
+
+  GLfloat global_ambient[] = { 0.3f, 0.3f, 0.3f, 0.3f };
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 }
 
 void quit() {
@@ -393,14 +429,15 @@ int main(int argc, char* argv[]) {
 	glutSpecialUpFunc(keyUp);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_COLOR_MATERIAL);
-	// glEnable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
   glShadeModel(GL_SMOOTH);
   glEnable(GL_COLOR_MATERIAL);
-
+  glShadeModel(GL_FLAT);
 
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_NORMALIZE);
+
+  initLight();
 
   loadTexture("./res/bricks.tga", 1);
   loadTexture("./res/folk.tga", 2);
@@ -408,5 +445,6 @@ int main(int argc, char* argv[]) {
   loadTexture("./res/done.tga", 4);
 
   glutMainLoop();
+
   return 0;
 }
