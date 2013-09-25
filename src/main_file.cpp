@@ -23,6 +23,9 @@ using namespace std;
 #define y_axis 1
 #define last_level 3
 
+#define max_zoom -6
+#define min_zoom -35
+
 GLuint tex[10];
 TGAImg img;
 
@@ -144,6 +147,11 @@ void readLevel(int level) {
       }
     }
   }
+}
+
+void changeZoom(int change) {
+  int new_zoom = zoom + change;
+  if (new_zoom > min_zoom && new_zoom < max_zoom) zoom = new_zoom;
 }
 
 void restartLevel(int level) {
@@ -394,11 +402,11 @@ void keyDown(int c, int x, int y) {
       break;
     case 61:
       //zoom in
-      zoom+=1;
+      changeZoom(1);
       break;
     case 45:
       //zoom out
-      zoom-=1;
+      changeZoom(-1);
       break;
     case 114:
       //reset level
