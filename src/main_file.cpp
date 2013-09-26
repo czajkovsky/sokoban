@@ -15,10 +15,10 @@
 
 using namespace std;
 
-#define up 1
-#define down 2
-#define left 3
-#define right 4
+#define up 0
+#define down 1
+#define left 2
+#define right 3
 #define x_axis 0
 #define y_axis 1
 #define last_level 3
@@ -191,8 +191,8 @@ void move(int direction) {
   int move_allowed = 1;
   new_folk_x = folk_x + directions[rotation][direction][x_axis];
   new_folk_y = folk_y + directions[rotation][direction][y_axis];
-  if (currentLevelFields[new_folk_x][new_folk_y]) move_allowed= 0;
-  if (move_allowed && currentLevelBox[new_folk_x][new_folk_y]){
+  if (currentLevelFields[new_folk_x][new_folk_y]) move_allowed = 0;
+  if (move_allowed && currentLevelBox[new_folk_x][new_folk_y]) {
     int new_box_x = new_folk_x + directions[rotation][direction][x_axis];
     int new_box_y = new_folk_y + directions[rotation][direction][y_axis];
     if (currentLevelFields[new_box_x][new_box_y]) move_allowed = 0;
